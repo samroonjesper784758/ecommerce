@@ -11,8 +11,7 @@ export const handleCreateUser = async (
     const { name, password, email }: CreateUserDto = req.body;
 
     if (!name || !email || !password) {
-      res.status(400).json({ message: "All fields are required" });
-      return;
+      throw new Error("All fiels are required")
     }
 
     const response = await authServices.handleCreateUser({
@@ -24,6 +23,32 @@ export const handleCreateUser = async (
     res
       .status(201)
       .json({ message: "User created successfully", user: response });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const handleSignIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { password, email }: CreateUserDto = req.body;
+
+    if (!email || !password) {
+      res.status(400).json({ message: "All fields are required" });
+      return;
+    }
+
+    const { user, token } = await authServices.handleSignIn({
+      email,
+      password,
+    });
+
+    res
+      .status(201)
+      .json({ message: "User logged in successfully", user, token });
   } catch (error) {
     next(error);
   }
