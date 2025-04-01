@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as authServices from "../services/auth.services";
+import { validateSignup } from "../schema/signup";
 
 export const signup = async (
   req: Request,
@@ -7,13 +8,9 @@ export const signup = async (
   next: NextFunction
 ) => {
   try {
+    validateSignup.parse(req.body);
     const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      res.status(400).json({ message: "All fields are required" });
-      return;
-    }
-
+    
     const user = await authServices.signup({
       name,
       email,
