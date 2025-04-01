@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { PORT } from "./secretes";
 import { authRouter } from "./routes";
-import { errorHandler } from "./middlewares/errorHandler";
+import { errorMiddleWare } from "./middlewares/errors";
 
 // Applications
 const app = express();
@@ -17,5 +17,5 @@ app.get("/", (req: Request, res: Response) => {
 // routes
 app.use("/api", authRouter);
 
-app.use(errorHandler);
+app.use(errorMiddleWare);
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
