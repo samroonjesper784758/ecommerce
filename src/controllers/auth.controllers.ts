@@ -2,11 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import * as authServices from "../services/auth.services";
 import { validateLogin, validateSignup } from "../schema/auth.schema";
 
-export const signup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signup = async (req: Request, res: Response) => {
   const data = validateSignup.parse(req.body);
   const user = await authServices.signup(data);
 
@@ -16,11 +12,7 @@ export const signup = async (
   });
 };
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const login = async (req: Request, res: Response) => {
   const data = validateLogin.parse(req.body);
   const { token, user } = await authServices.login(data);
 
@@ -29,4 +21,8 @@ export const login = async (
     user,
     token,
   });
+};
+
+export const me = async (req: Request, res: Response) => {
+  console.log((req as any).user);
 };

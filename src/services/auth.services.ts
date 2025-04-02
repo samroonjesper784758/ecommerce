@@ -1,7 +1,7 @@
 import { CreateUserDto, LoginUserDto } from "../interfaces/auth.interfaces";
 import { prisma } from "../prisma";
 import { compareSync, hashSync } from "bcrypt";
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secretes";
 import { CustomError, ErrorCode } from "../exceptions/root";
 import { BadRequestException } from "../exceptions/badRequestException";
