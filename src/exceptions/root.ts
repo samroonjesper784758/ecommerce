@@ -16,10 +16,11 @@ export class CustomError extends Error {
 }
 
 export enum ErrorCode {
-  USER_NOT_FOUND = 1001,
-  USER_ALREADY_EXISTS = 1002,
-  PASSWORD_DOES_NOT_MATCH = 1003,
-  INTERNAL_SERVER_ERROR = 1004,
-  VALIDATION_ERROR=1005,
-  UNAUTHORIZED=1006,
+  USER_NOT_FOUND = 404, // 404 Not Found
+  USER_ALREADY_EXISTS = 409, // 409 Conflict
+  PASSWORD_DOES_NOT_MATCH = 401, // 401 Unauthorized (Invalid Credentials)
+  INTERNAL_SERVER_ERROR = 500, // 500 Internal Server Error
+  VALIDATION_ERROR = 400, // 400 Bad Request (Validation Errors)
+  UNAUTHORIZED = 403, // 403 Forbidden (Access Denied)
 }
+

@@ -6,7 +6,7 @@ export const signup = async (req: Request, res: Response) => {
   const data = validateSignup.parse(req.body);
   const user = await authServices.signup(data);
 
-  res.status(200).json({
+  res.status(201).json({
     message: "User created successfully",
     user,
   });
