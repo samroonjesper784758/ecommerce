@@ -74,3 +74,11 @@ export const createManyProducts = async (data: createProductDto[]) => {
   });
   return count;
 };
+
+export const deleteManyProducts = async (ids: string[]) => {
+  const count = await prisma.product.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  return count;
+};

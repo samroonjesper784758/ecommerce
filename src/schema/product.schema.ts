@@ -7,7 +7,10 @@ export const validateProductSchema = z.object({
   price: z.number().positive("Price must be a positive"),
 });
 
-// Validate an array of products
 export const validateProductsArraySchema = z.object({
   products: z.array(validateProductSchema).min(1, "Products array cannot be empty"),
+});
+
+export const validateDeleteManyProductsSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1, "At least one product ID is required"),
 });

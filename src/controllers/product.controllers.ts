@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import {
+  validateDeleteManyProductsSchema,
   validateProductsArraySchema,
   validateProductSchema,
 } from "../schema/product.schema";
@@ -90,5 +91,15 @@ export const createManyProducts = async (req: Request, res: Response) => {
   return res.status(201).json({
     message: "Successfully created products",
     numberOfRecords: count,
+  });
+};
+
+export const deleteManyProducts = async (req: Request, res: Response) => {
+  console.log("----------")
+  const data = validateDeleteManyProductsSchema.parse(req.body);
+  const { count } = await productServices.deleteManyProducts(data.ids);
+  return res.status(200).json({
+    message: "Records with ids deleted successfully",
+    deletedCount: count,
   });
 };

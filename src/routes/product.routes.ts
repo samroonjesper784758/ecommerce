@@ -34,11 +34,18 @@ router.get(
   errorHandler(productController.getProductById)
 );
 
-router.get(
+router.delete(
   // Delete product by id
   "/delete/:id",
   [authMiddleware, adminMiddleware],
   errorHandler(productController.deleteProductById)
+);
+
+router.delete(
+  // Delete product by ids
+  "/delete-many",
+  [authMiddleware, adminMiddleware],
+  errorHandler(productController.deleteManyProducts)
 );
 
 router.put(
