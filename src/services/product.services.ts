@@ -23,9 +23,33 @@ export const updateProduct = async (data: UpdateProductDto, id: string) => {
   return updatedProduct;
 };
 
-export const listProducts = async () => {
-  const products = await prisma.product.findMany();
-  return products;
+export const listProducts = async (
+  page: number | null,
+  pageSize: number | null
+) => {
+  if (page && pageSize) {
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.product.count(), // Get total product count
+    ]);
+
+    return { products, total };
+  }
+
+  // If no pagination, fetch all products and count them together
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.product.count(),
+  ]);
+
+  return { products, total };
 };
 
 export const getProductById = async (id: string) => {
@@ -42,4 +66,11 @@ export const deleteProductById = async (id: string) => {
   });
 
   return product;
+};
+
+export const createManyProducts = async (data: createProductDto[]) => {
+  const count = await prisma.product.createMany({
+    data,
+  });
+  return count;
 };

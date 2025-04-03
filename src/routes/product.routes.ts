@@ -6,31 +6,43 @@ import { adminMiddleware } from "../middlewares/adminMiddleware";
 
 const router = Router();
 
-router.post(    // create a product
+router.post(
+  // create a product
   "/create",
   [authMiddleware, adminMiddleware],
   errorHandler(productController.createProduct)
 );
 
-router.get(   // List all products  
+router.post(
+  // create many product
+  "/create-many",
+  [authMiddleware, adminMiddleware],
+  errorHandler(productController.createManyProducts)
+);
+
+router.get(
+  // List all products
   "/",
   [authMiddleware, adminMiddleware],
   errorHandler(productController.listProducts)
 );
 
-router.get(   // Get product by id 
+router.get(
+  // Get product by id
   "/:id",
   [authMiddleware, adminMiddleware],
   errorHandler(productController.getProductById)
 );
 
-router.get(   // Delete product by id 
+router.get(
+  // Delete product by id
   "/delete/:id",
   [authMiddleware, adminMiddleware],
   errorHandler(productController.deleteProductById)
 );
 
-router.put(   // Update a product
+router.put(
+  // Update a product
   "/update/:id",
   [authMiddleware, adminMiddleware],
   errorHandler(productController.updateProduct)

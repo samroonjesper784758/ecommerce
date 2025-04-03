@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { validateProductSchema } from "../schema/product.schema";
+import {
+  validateProductsArraySchema,
+  validateProductSchema,
+} from "../schema/product.schema";
 import * as productServices from "../services/product.services";
 import { NotFoundExceptions } from "../exceptions/notFoudException";
 import { ErrorCode } from "../exceptions/root";
@@ -33,14 +36,25 @@ export const updateProduct = async (req: Request, res: Response) => {
 };
 
 export const listProducts = async (req: Request, res: Response) => {
-  const products = await productServices.listProducts();
+  const page = req.query.page ? parseInt(req.query.page as string) : null;
+  const pageSize = req.query.pageSize
+    ? parseInt(req.query.pageSize as string)
+    : null;
+
+  const { products, total } = await productServices.listProducts(
+    page,
+    pageSize
+  );
   if (!products) {
     throw new NotFoundExceptions(
       "There are no products available",
       ErrorCode.PRODUCT_NOT_FOUND
     );
   }
-  return res.status(200).send(products);
+  return res.status(200).send({
+    products,
+    total,
+  });
 };
 
 export const getProductById = async (req: Request, res: Response) => {
@@ -67,4 +81,14 @@ export const deleteProductById = async (req: Request, res: Response) => {
   return res
     .status(200)
     .json({ message: "Product deleted successfully", product });
+};
+
+export const createManyProducts = async (req: Request, res: Response) => {
+  const data = validateProductsArraySchema.parse(req.body);
+  const { count } = await productServices.createManyProducts(data.products);
+
+  return res.status(201).json({
+    message: "Successfully created products",
+    numberOfRecords: count,
+  });
 };
