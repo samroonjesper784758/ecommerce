@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import * as authServices from "../services/auth.services";
 import { validateLogin, validateSignup } from "../schema/auth.schema";
+import { CreateUserDto } from "../interfaces/auth.interfaces";
 
 export const signup = async (req: Request, res: Response) => {
-  const data = validateSignup.parse(req.body);
+  const data = validateSignup.parse(req.body) as CreateUserDto;
   const user = await authServices.signup(data);
 
   res.status(201).json({
@@ -13,7 +14,7 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const data = validateLogin.parse(req.body);
+  const data = validateLogin.parse(req.body) as CreateUserDto;
   const { token, user } = await authServices.login(data);
 
   res.status(200).json({

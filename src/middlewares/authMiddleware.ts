@@ -4,6 +4,7 @@ import { ErrorCode } from "../exceptions/root";
 import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../secretes";
 import { prisma } from "../prisma";
+import { User } from "@prisma/client";
 
 export const authMiddleware = async (
   req: Request,
@@ -13,10 +14,12 @@ export const authMiddleware = async (
   const token = req.headers.authorization?.replace("Bearer ", "");
 
   if (!token) {
-    return next(new unAuthorizedException(
-      "Please provide an authorization token",
-      ErrorCode.UNAUTHORIZED
-    ));
+    return next(
+      new unAuthorizedException(
+        "Please provide an authorization token",
+        ErrorCode.UNAUTHORIZED
+      )
+    );
   }
 
   try {
@@ -30,34 +33,44 @@ export const authMiddleware = async (
     });
 
     if (!user) {
-      return next(new unAuthorizedException("User not found", ErrorCode.UNAUTHORIZED));
+      return next(
+        new unAuthorizedException("User not found", ErrorCode.UNAUTHORIZED)
+      );
     }
 
-    (req as any).user = user;
+    req.user = user
     next();
   } catch (error: any) {
     // Check for specific JWT error types
     if (error.name === "TokenExpiredError") {
-      return next(new unAuthorizedException(
-        "The provided token has expired",
-        ErrorCode.UNAUTHORIZED
-      ));
+      return next(
+        new unAuthorizedException(
+          "The provided token has expired",
+          ErrorCode.UNAUTHORIZED
+        )
+      );
     } else if (error.name === "JsonWebTokenError") {
-      return next(new unAuthorizedException(
-        "The provided token is invalid",
-        ErrorCode.UNAUTHORIZED
-      ));
+      return next(
+        new unAuthorizedException(
+          "The provided token is invalid",
+          ErrorCode.UNAUTHORIZED
+        )
+      );
     } else if (error.name === "NotBeforeError") {
-      return next(new unAuthorizedException(
-        "The provided token is not active yet",
-        ErrorCode.UNAUTHORIZED
-      ));
+      return next(
+        new unAuthorizedException(
+          "The provided token is not active yet",
+          ErrorCode.UNAUTHORIZED
+        )
+      );
     } else {
       // Generic error for other issues
-      return next(new unAuthorizedException(
-        "Authentication failed",
-        ErrorCode.UNAUTHORIZED
-      ));
+      return next(
+        new unAuthorizedException(
+          "Authentication failed",
+          ErrorCode.UNAUTHORIZED
+        )
+      );
     }
   }
 };

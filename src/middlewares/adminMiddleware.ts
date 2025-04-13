@@ -7,9 +7,9 @@ export const adminMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = (req as any).user;
+  const user = req.user;
 
-  if (user?.role === "ADMIN") {
+  if (user.role === "ADMIN") {
     next();
   } else {
     next(

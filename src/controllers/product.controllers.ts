@@ -7,9 +7,10 @@ import {
 import * as productServices from "../services/product.services";
 import { NotFoundExceptions } from "../exceptions/notFoudException";
 import { ErrorCode } from "../exceptions/root";
+import { createProductDto } from "../interfaces/product.interfaces";
 
 export const createProduct = async (req: Request, res: Response) => {
-  const data = validateProductSchema.parse(req.body);
+  const data = validateProductSchema.parse(req.body) as createProductDto;
   const product = await productServices.createProduct(data);
 
   res.status(201).json({
@@ -86,7 +87,9 @@ export const deleteProductById = async (req: Request, res: Response) => {
 
 export const createManyProducts = async (req: Request, res: Response) => {
   const data = validateProductsArraySchema.parse(req.body);
-  const { count } = await productServices.createManyProducts(data.products);
+  const { count } = await productServices.createManyProducts(
+    data.products as createProductDto[]
+  );
 
   return res.status(201).json({
     message: "Successfully created products",
@@ -95,7 +98,7 @@ export const createManyProducts = async (req: Request, res: Response) => {
 };
 
 export const deleteManyProducts = async (req: Request, res: Response) => {
-  console.log("----------")
+  console.log("----------");
   const data = validateDeleteManyProductsSchema.parse(req.body);
   const { count } = await productServices.deleteManyProducts(data.ids);
   return res.status(200).json({
