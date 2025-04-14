@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { validateCreateAddressSchema } from "../schema/address.schema";
+import {
+  validateCreateAddressSchema,
+  validateUpdateUser,
+} from "../schema/address.schema";
 import * as addressServices from "../services/address.services";
 import {
   createAddressDto,
@@ -48,4 +51,14 @@ export const handleUpdateAddressById = async (req: Request, res: Response) => {
     message: "Address updated successfully",
     newAddress: updatedAddress,
   });
+};
+
+export const handleUpdateUser = async (req: Request, res: Response) => {
+  const userId = req.user.id
+  const data = validateUpdateUser.parse(req.body) as {
+    defaultShippingAddress: string;
+  };
+
+  const {updatedUser} = await addressServices.handleUpdateUser(data, userId)
+  return res.status(201).send(updatedUser)
 };
