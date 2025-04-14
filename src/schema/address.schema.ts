@@ -7,3 +7,7 @@ export const validateCreateAddressSchema = z.object({
   pinCode: z.string().min(1, "Pin code is required"),
   country: z.string().min(1, "Country is required"),
 });
+
+export const validateUpdateUser = z.object({
+  defaultShippingAddressId: z.string()
+})

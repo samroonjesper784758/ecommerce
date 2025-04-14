@@ -25,4 +25,6 @@ router.delete(
 
 router.patch("/update/:id", authMiddleware, errorHandler(addressController.handleUpdateAddressById))
 
+router.put("/", authMiddleware, errorHandler(addressController.handleUpdateUser))
+
 export default router;

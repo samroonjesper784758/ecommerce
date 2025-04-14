@@ -70,3 +70,32 @@ export const handleUpdateAddressById = async (
     updatedAddress,
   };
 };
+
+export const handleUpdateUser = async (
+  data: { defaultShippingAddress: string },
+  userId: string
+) => {
+  let address = await prisma.address.findFirst({
+    where: { id: data.defaultShippingAddress },
+  });
+
+  if (!address) {
+    throw new BadRequestException(
+      "Address not found or does not belong to user",
+      ErrorCode.ADDRESS_NOT_FOUND
+    );
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      defaultShippingAddress: address.id,
+    },
+  });
+
+  return {
+    updatedUser
+  }
+};
