@@ -25,5 +25,5 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const me = async (req: Request, res: Response) => {
-  console.log((req as any).user);
+  return res.status(200).send(req.user);
 };

@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma";
+import { NotFoundExceptions } from "../exceptions/notFoudException";
+import { ErrorCode } from "../exceptions/root";
 
 export const handleAddItemToCart = async (
   productId: string,
@@ -11,8 +13,12 @@ export const handleAddItemToCart = async (
   });
 
   if (!product) {
-    throw new Error("Product not found");
+    throw new NotFoundExceptions(
+      "Product not found",
+      ErrorCode.PRODUCT_NOT_FOUND
+    );
   }
+
 
   const existingProduct = await prisma.cart.findFirst({
     where: {
@@ -35,6 +41,7 @@ export const handleAddItemToCart = async (
     return updatedCartItem;
   }
 
+
   const newCartItem = await prisma.cart.create({
     data: {
       productId,
@@ -42,8 +49,30 @@ export const handleAddItemToCart = async (
       userId,
       price: product.price,
       totalPrice: product.price * quantity,
-    } as Prisma.CartUncheckedCreateInput,
+    },
   });
 
   return newCartItem;
+};
+
+export const removeItemFromCart = async (productId: string, userId: string) => {
+  const cartItem = await prisma.cart.findFirst({
+    where: {
+      productId,
+      userId,
+    },
+  });
+
+  if (!cartItem) {
+    throw new NotFoundExceptions(
+      "Product not found",
+      ErrorCode.PRODUCT_NOT_FOUND
+    );
+  }
+
+  return await prisma.cart.delete({
+    where: {
+      id: cartItem.id,
+    },
+  });
 };

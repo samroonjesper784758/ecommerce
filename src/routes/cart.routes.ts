@@ -5,6 +5,16 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router: Router = Router();
 
-router.post("/addItemToCart",[authMiddleware], errorHandler(cartController.handleAddItemToCart));
+router.post(
+  "/addItemToCart",
+  [authMiddleware],
+  errorHandler(cartController.handleAddItemToCart)
+);
+
+router.delete(
+  "/removeItemFromCart",
+  [authMiddleware],
+  errorHandler(cartController.removeItemFromCart)
+);
 
 export default router;
