@@ -20,18 +20,25 @@ export const handleAddItemToCart = async (req: Request, res: Response) => {
 };
 
 export const removeItemFromCart = async (req: Request, res: Response) => {
-  const { productId } = req.body;
+  const { productId, quantity } = req.body;
+  const productQuantity: number = quantity ?? 1;
 
   if (!productId) {
     return res.status(400).json({ message: "Product id is required." });
   }
 
-  const response = await cartServices.removeItemFromCart(
-    productId,
-    req.user.id
-  );
+  const { action, deletedItem, updatedItem } =
+    await cartServices.removeItemFromCart(
+      productId,
+      req.user.id,
+      productQuantity
+    );
 
   return res
     .status(200)
-    .json({ message: "Item deleted successfully", deletedItem: response });
+    .json(
+      action === "DELETED"
+        ? { message: "Deleted item successfully", deletedItem }
+        : { message: "updated item successfully", updatedItem }
+    );
 };

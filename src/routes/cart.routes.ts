@@ -11,7 +11,7 @@ router.post(
   errorHandler(cartController.handleAddItemToCart)
 );
 
-router.delete(
+router.patch(
   "/removeItemFromCart",
   [authMiddleware],
   errorHandler(cartController.removeItemFromCart)

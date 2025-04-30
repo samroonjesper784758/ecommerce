@@ -19,7 +19,6 @@ export const handleAddItemToCart = async (
     );
   }
 
-
   const existingProduct = await prisma.cart.findFirst({
     where: {
       productId,
@@ -41,7 +40,6 @@ export const handleAddItemToCart = async (
     return updatedCartItem;
   }
 
-
   const newCartItem = await prisma.cart.create({
     data: {
       productId,
@@ -55,7 +53,11 @@ export const handleAddItemToCart = async (
   return newCartItem;
 };
 
-export const removeItemFromCart = async (productId: string, userId: string) => {
+export const removeItemFromCart = async (
+  productId: string,
+  userId: string,
+  productQuantity: number
+) => {
   const cartItem = await prisma.cart.findFirst({
     where: {
       productId,
@@ -65,14 +67,36 @@ export const removeItemFromCart = async (productId: string, userId: string) => {
 
   if (!cartItem) {
     throw new NotFoundExceptions(
-      "Product not found",
+      "Product not found in cart",
       ErrorCode.PRODUCT_NOT_FOUND
     );
   }
 
-  return await prisma.cart.delete({
-    where: {
-      id: cartItem.id,
-    },
-  });
+  const newQuantity = cartItem.quantity - productQuantity;
+
+  if (newQuantity <= 0) {
+    const deletedItem = await prisma.cart.delete({
+      where: {
+        id: cartItem.id,
+      },
+    });
+
+    return {
+      action: "DELETED",
+      deletedItem,
+    };
+  } else {
+    const updatedItem = await prisma.cart.update({
+      where: { id: cartItem.id },
+      data: {
+        quantity: newQuantity,
+        totalPrice: cartItem.price * newQuantity,
+      },
+    });
+
+    return {
+      action: "UPDATED",
+      updatedItem,
+    };
+  }
 };
