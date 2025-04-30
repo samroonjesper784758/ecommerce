@@ -42,3 +42,28 @@ export const removeItemFromCart = async (req: Request, res: Response) => {
         : { message: "updated item successfully", updatedItem }
     );
 };
+
+export const getUserCart = async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const { userCart } = await cartServices.getUserCart(userId);
+
+  return res.status(200).send(userCart);
+};
+
+export const handleChangeQuantity = async (req: Request, res: Response) => {
+  const { cartId } = req.params;
+  const { quantity } = req.body;
+
+  if (typeof quantity !== "number" || quantity < 1) {
+    return res.status(400).json({ message: "Invalid quantity value" });
+  }
+  const response = await cartServices.handleChangeQuantity(
+    cartId,
+    quantity
+  );
+
+  return res.status(201).json({
+    message: "success",
+    updatedCart: response,
+  });
+};

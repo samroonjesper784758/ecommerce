@@ -100,3 +100,39 @@ export const removeItemFromCart = async (
     };
   }
 };
+
+export const getUserCart = async (userId: string) => {
+  const cartItems = await prisma.cart.findMany({
+    where: { userId },
+  });
+
+  return {
+    userCart: cartItems,
+  };
+};
+
+export const handleChangeQuantity = async (
+  cartId: string,
+  quantity: number
+) => {
+  const cartItem = await prisma.cart.findFirst({
+    where: { id: cartId },
+  });
+
+  if (!cartItem) {
+    throw new NotFoundExceptions(
+      "Cart item not found",
+      ErrorCode.CART_ITEM_NOT_FOUND
+    );
+  }
+
+  const updatedCart = await prisma.cart.update({
+    where: { id: cartId },
+    data: {
+      quantity,
+      totalPrice: cartItem.price * quantity,
+    },
+  });
+
+  return updatedCart;
+};

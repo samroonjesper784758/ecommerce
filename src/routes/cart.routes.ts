@@ -17,4 +17,12 @@ router.patch(
   errorHandler(cartController.removeItemFromCart)
 );
 
+router.patch(
+  "/:cartId/change-quantity",
+  [authMiddleware],
+  errorHandler(cartController.handleChangeQuantity)
+);
+
+router.get("/user", [authMiddleware], errorHandler(cartController.getUserCart));
+
 export default router;
