@@ -16,6 +16,7 @@ export class CustomError extends Error {
 }
 
 export enum ErrorCode {
+  CART_IS_EMPTY = 204,
   USER_NOT_FOUND = 404, // 404 Not Found
   PRODUCT_NOT_FOUND = 404, // 404 Not Found
   CART_ITEM_NOT_FOUND = 404, // 404 Not Found

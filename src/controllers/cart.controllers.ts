@@ -1,14 +1,9 @@
 import { Request, Response } from "express";
 import * as cartServices from "../services/cart.services";
+import { validateAddItemToCartSchema, validateRemoveItemFromCartSchema } from "../schema/cart.schema";
 
 export const handleAddItemToCart = async (req: Request, res: Response) => {
-  const { productId, quantity } = req.body;
-
-  if (!productId || !quantity) {
-    return res
-      .status(400)
-      .json({ message: "Product Id or quantity is required" });
-  }
+  const { productId, quantity } = validateAddItemToCartSchema.parse(req.body);
 
   const response = await cartServices.handleAddItemToCart(
     productId,
@@ -20,8 +15,8 @@ export const handleAddItemToCart = async (req: Request, res: Response) => {
 };
 
 export const removeItemFromCart = async (req: Request, res: Response) => {
-  const { productId, quantity } = req.body;
-  const productQuantity: number = quantity ?? 1;
+  const { productId, quantity } = validateRemoveItemFromCartSchema.parse(req.body);
+  const productQuantity = quantity ?? 1;
 
   if (!productId) {
     return res.status(400).json({ message: "Product id is required." });
@@ -57,10 +52,7 @@ export const handleChangeQuantity = async (req: Request, res: Response) => {
   if (typeof quantity !== "number" || quantity < 1) {
     return res.status(400).json({ message: "Invalid quantity value" });
   }
-  const response = await cartServices.handleChangeQuantity(
-    cartId,
-    quantity
-  );
+  const response = await cartServices.handleChangeQuantity(cartId, quantity);
 
   return res.status(201).json({
     message: "success",

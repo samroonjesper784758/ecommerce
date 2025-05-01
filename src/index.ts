@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { PORT } from "./secretes";
-import { addressRouter, authRouter, cartRouter, productRouter } from "./routes";
+import { addressRouter, authRouter, cartRouter, orderRouter, productRouter } from "./routes";
 import { errorMiddleWare } from "./middlewares/errors";
 
 // Applications
@@ -19,6 +19,7 @@ app.use("/api", authRouter);
 app.use("/products", productRouter);
 app.use("/address", addressRouter);
 app.use("/cart", cartRouter)
+app.use("/order", orderRouter)
 
 app.use(errorMiddleWare);
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
