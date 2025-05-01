@@ -7,6 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderEventStatus {
+  PENDING
+  ACCEPTED
+  OUT_FOR_DELIVERY
+  DELIVERD
+  CANCELLED
+}
+
 model User {
   id                     String    @id @default(uuid())
   name                   String
@@ -18,6 +31,7 @@ model User {
   defaultShippingAddress String?
   address                Address[]
   Cart                   Cart[]
+  order                  Order[]
 
   @@map("users")
 }
@@ -36,14 +50,15 @@ model Address {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  price       Float
-  tags        String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Cart        Cart[]
+  id           String         @id @default(uuid())
+  name         String
+  description  String
+  price        Float
+  tags         String[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Cart         Cart[]
+  OrderProduct OrderProduct[]
 
   @@map("products")
 }
@@ -61,7 +76,34 @@ model Cart {
   users      User     @relation(fields: [userId], references: [id])
 }
 
-enum Role {
-  USER
-  ADMIN
+model Order {
+  id         String         @id @default(uuid())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id])
+  address    String
+  netAmount  Float
+  products   OrderProduct[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  OrderEvent OrderEvent[]
+}
+
+model OrderProduct {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderEvent {
+  id        String           @id @default(uuid())
+  orderId   String
+  order     Order            @relation(fields: [orderId], references: [id])
+  status    OrderEventStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
